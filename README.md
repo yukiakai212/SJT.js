@@ -1,6 +1,12 @@
 # SJT.js
 
-> 🚀 Fast and lightweight encoder/decoder for [Structured JSON Table (SJT)](https://github.com/SJTF/SJT/) – a compact, tabular representation of JSON arrays.
+[![NPM Version][npm-version-image]][npm-url]
+[![NPM Downloads][npm-downloads-image]][npm-downloads-url]
+
+[![Build Status][github-build-url]][github-url]
+[![codecov][codecov-image]][codecov-url]
+
+> 🚀 Fast and lightweight encoder/decoder for [Structured JSON Table (SJT)](https://github.com/SJTF/SJT/)
 
 **SJT.js** is a JavaScript implementation of the [Structured JSON Table (SJT)](https://github.com/SJTF/SJT/) Specification. It provides an efficient way to compress repetitive JSON structures, particularly arrays of uniform objects, into a compact, schema-driven table format.
 
@@ -162,3 +168,13 @@ This library implements the full [Structured JSON Table Specification](https://g
 MIT © 2025 [Yuki Akai](https://github.com/yukiakai212)
 
 ---
+
+[npm-downloads-image]: https://badgen.net/npm/dm/SJT.js
+[npm-downloads-url]: https://www.npmjs.com/package/SJT.js
+[npm-url]: https://www.npmjs.com/package/SJT.js
+[npm-version-image]: https://badgen.net/npm/v/SJT.js
+[github-build-url]: https://github.com/yukiakai212/SJT.js/actions/workflows/build.yml/badge.svg
+[github-url]: https://github.com/yukiakai212/SJT.js/
+[codecov-image]: https://codecov.io/gh/yukiakai212/SJT.js/branch/main/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/yukiakai212/SJT.js
+[changelog-url]: https://github.com/yukiakai212/SJT.js/blob/main/CHANGELOG.md
