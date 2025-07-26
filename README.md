@@ -169,10 +169,10 @@ MIT © 2025 [Yuki Akai](https://github.com/yukiakai212)
 
 ---
 
-[npm-downloads-image]: https://badgen.net/npm/dm/SJT.js
-[npm-downloads-url]: https://www.npmjs.com/package/SJT.js
-[npm-url]: https://www.npmjs.com/package/SJT.js
-[npm-version-image]: https://badgen.net/npm/v/SJT.js
+[npm-downloads-image]: https://badgen.net/npm/dm/sjt.js
+[npm-downloads-url]: https://www.npmjs.com/package/sjt.js
+[npm-url]: https://www.npmjs.com/package/sjt.js
+[npm-version-image]: https://badgen.net/npm/v/sjt.js
 [github-build-url]: https://github.com/yukiakai212/SJT.js/actions/workflows/build.yml/badge.svg
 [github-url]: https://github.com/yukiakai212/SJT.js/
 [codecov-image]: https://codecov.io/gh/yukiakai212/SJT.js/branch/main/graph/badge.svg
