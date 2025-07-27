@@ -120,7 +120,7 @@ SJT is ideal for data **transmission** where reducing **bandwidth** is crucial, 
 
 ## ⚠ Limitations
 
-* Works best on uniform arrays (e.g., consistent object structure)
+* The structure must be uniform across all entries
 * Does not handle mixed schemas or optional fields (by design)
 
 ---
