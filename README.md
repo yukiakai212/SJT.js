@@ -90,7 +90,7 @@ client.send(compressedJson);
 
 
 //client
-fetch('http://your-server').then((res) => {
+fetch('http://you-server').then((res) => {
 const restored = decodeSJT(res.json());
 console.log(restored);
 }) 
@@ -111,9 +111,9 @@ Decodes SJT-encoded content back into original JSON.
 
 ---
 
-## 🖐 Use Cases
+## 🖐 Why
 
-SJT is ideal for data **transmission** where reducing **bandwidth** is crucial, especially for APIs returning large arrays of similarly structured objects. It compresses payloads without requiring gzip or other transport-level compression — making it useful in environments where such compression is not possible or too costly, and compresses even better when used with gzip.
+SJT is ideal for data **transmission** where reducing **bandwidth** is crucial, especially for APIs returning large arrays of similarly structured objects. SJT reduces payload size even without relying on gzip, and compresses even better when used alongside gzip..
 
 
 ---
@@ -128,6 +128,12 @@ SJT is ideal for data **transmission** where reducing **bandwidth** is crucial, 
 ## 📑 Specification
 
 This library implements the full [Structured JSON Table Specification](https://github.com/SJTF/SJT/) v1.0.
+
+---
+
+## Visual Diagram
+
+Raw JSON --> encodeSJT --> [ header, data ] --> decodeSJT --> Raw JSON
 
 ---
 
@@ -159,6 +165,41 @@ This library implements the full [Structured JSON Table Specification](https://g
 ---
 
 > 🚀 SJT offers a great balance between size and speed, making it ideal for transmitting structured data efficiently.
+
+---
+
+### ⚡ Why is SJT faster than regular JSON?
+
+Although SJT is still transported as JSON (via `JSON.stringify` / `JSON.parse`), its **structural design** allows it to outperform standard row-based JSON arrays during parsing and transformation.
+
+#### ✅ Core reason: columnar layout
+
+Instead of representing each record as an object, SJT stores values by columns:
+
+```js
+// SJT format
+[
+  ["id", "name", "age"],                    // header
+  [[1, 2], ["Alice", "Bob"], [25, 30]]      // data by column
+]
+
+// Regular JSON
+[
+  { "id": 1, "name": "Alice", "age": 25 },
+  { "id": 2, "name": "Bob", "age": 30 }
+]
+```
+
+#### 🔍 Performance advantages:
+
+* ✅ **Fewer key lookups:** Engines don’t repeatedly parse and compare key strings like `"id"` and `"name"` for every row.
+* ✅ **Batch-friendly decode:** Data can be reconstructed with linear loops, avoiding per-object overhead.
+* ✅ **Better CPU cache locality:** Arrays grouped by type are more cache-efficient than scattered key-value pairs.
+* ✅ **No key-matching logic needed:** All columns align perfectly with the header—no missing or extra keys to check.
+
+#### ⚠️ Important:
+
+Although SJT is represented as a nested array, it is a **structured format** with a strict schema, not a generic 2D array.
 
 ---
 
