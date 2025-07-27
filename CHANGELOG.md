@@ -1,5 +1,11 @@
 # sjt.js
 
+## 1.1.1
+
+### Patch Changes
+
+- a340b32: improve performance
+
 ## 1.1.0
 
 ### Minor Changes
