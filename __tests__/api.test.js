@@ -14,8 +14,8 @@ describe.each([
 ])('sjt.js', (name, lib) => {
   test('should produce expected output', async () => {
     const primitiveArray = ['a', 'b'];
-    const data = { name: 'Yuki', id: 1, guild: [1, 2], old: 24 };
-    const data2 = { name: 'Yuki2', id: 2, guild: [10, 11], old: 10 };
+    const data = { name: 'Yuki', id: 1, guild: [1, 2], old: 24, g: null };
+    const data2 = { name: 'Yuki2', id: 2, guild: [10, 11], old: 10, g: null };
     const array = [data, data2, data];
     const nested = { name: 'Yuki', user: array, data };
     const nestedArray = [nested, nested];
