@@ -1,11 +1,10 @@
 //import { extractHeader } from './extractHeader.js';
-import { compileExtractors } from './compileExtractors.js';
-import { encodeSJT as encodev1 } from './encode.js';
+import { encodeSJT as encodev1 } from './src/encode.js';
 export interface EncodeSJTOptions {
   strict?: boolean;
 }
 
-import { isPrimitive, isPrimitiveArray } from './types.js';
+import { isPrimitive, isPrimitiveArray } from './src/types.js';
 const encode = (header: any, data: any): any => {
   // Case array object (header is [[subHeader]])
   if (Array.isArray(header) && header.length === 1 && Array.isArray(header[0])) {
@@ -76,6 +75,9 @@ const [hp, vp] = encodev1(primitiveArray);
 const [hd, vd] = encodev1(data);
 const [hn, vn] = encodev1(nested);
 const [hna, vna] = encodev1(nestedArray);
+
+console.log(JSON.stringify(encodev1({})));
+console.log(JSON.stringify(encodev1({null: 1})));
 
 console.log(JSON.stringify(encode(headerv1, users)));
 console.log(JSON.stringify(encode(hp, primitiveArray)));

@@ -19,6 +19,7 @@ describe.each([
     const array = [data, data2, data];
     const nested = { name: 'Yuki', user: array, data };
     const nestedArray = [nested, nested];
+    const nestedArrayDeep = [[[nested, nested], [nested, nested]]];
     const encodeAndDecode = (d) => {
       return JSON.stringify(lib.decodeSJT(lib.encodeSJT(d))) === JSON.stringify(d);
     };
@@ -28,5 +29,6 @@ describe.each([
     expect(encodeAndDecode(array)).toBe(true);
     expect(encodeAndDecode(nested)).toBe(true);
     expect(encodeAndDecode(nestedArray)).toBe(true);
+    expect(encodeAndDecode(nestedArrayDeep)).toBe(true);
   });
 });

@@ -1,0 +1,155 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\geometry{a4paper, margin=1in}
+\setlength{\parskip}{1em}
+\pagestyle{plain}
+
+\title{SJT (Structured JSON Table): A High-Performance Tabular Format for Web APIs and Data Transmission}
+\author{Yuki Akai}
+\date{2025-07-25}
+
+\begin{document}
+
+\maketitle
+
+\section*{Abstract}
+
+We introduce \textbf{SJT (Structured JSON Table)}, a lightweight tabular data format that offers significant improvements in encoding/decoding speed and size efficiency over conventional JSON and MessagePack, especially in the context of structured tabular data transmitted via REST APIs or streaming. SJT is not a replacement for JSON but an augmentation: designed to fix the inefficiencies of \texttt{Array<Object>}-style JSON by flattening it into a columnar structure inspired by table representations, without departing from JSON compatibility. Benchmarks show that SJT not only reduces payload size but also outperforms native JSON in both parse and generation speed on modern JavaScript engines like V8. SJT can serve as a drop-in format for many data-intensive applications, providing better network performance, lower memory overhead, and faster deserialization time.
+
+\section*{1. Introduction}
+
+JSON has long been the de facto standard for transmitting structured data across web applications. However, in scenarios where large tabular datasets are transferred (e.g., analytics APIs, dashboards, or log streams), traditional JSON introduces considerable overhead due to its verbose structure---especially the repeated field names within arrays of objects. This leads to larger payloads, slower parsing, and higher memory consumption.
+
+This document proposes \textbf{Structured JSON Table (SJT)}, a lightweight, JSON-compatible format optimized for high-performance transmission of structured, column-aligned data.
+
+\section*{2. Motivation}
+
+REST APIs and many data pipelines often communicate large amounts of tabular data in the form of \texttt{Array<Object>}, which is verbose and costly in size and performance. Formats like MessagePack aim to mitigate size but often do not improve speed. SJT leverages columnar layout (shared field names, aligned rows) to optimize both.
+
+\section*{3. Format Specification (v1)}
+
+An SJT payload is represented as a 2-element array:
+
+\begin{lstlisting}[language=json]
+[
+  [["id", "name", "age"]],                  // SjtHeader
+  [[1, "Alice", 30], [2, "Bob", 25]]       // SjtData
+]
+\end{lstlisting}
+
+\textit{Supports arbitrarily nested structures via recursive headers.}
+
+This format consists of:
+\begin{itemize}
+  \item \textbf{SjtHeader}: An array of field names (strings).
+  \item \textbf{SjtData}: An array of arrays, where each inner array corresponds to a row, aligned with the header.
+\end{itemize}
+
+The format optionally supports a third element, reserved for metadata (e.g., versioning, schema hints):
+
+\begin{lstlisting}[language=json]
+[
+  [["id", "name", "age"]],
+  [[1, "Alice", 30], [2, "Bob", 25]],
+  { "version": "1.0", "schema": "..." }
+]
+\end{lstlisting}
+
+\textit{Although the physical representation uses JSON arrays, SJT is not merely an array-of-arrays — it is a self-described tabular format with strict structure and semantics. Tools reading SJT should treat it accordingly.}
+
+\section*{4. Benchmarks Summary}
+
+\begin{center}
+\begin{tabular}{|l|r|r|r|}
+\hline
+\textbf{Format} & \textbf{Size (KB)} & \textbf{Encode (ms)} & \textbf{Decode (ms)} \\
+\hline
+JSON & 3849.34 & 41.81 & 51.86 \\
+JSON + gzip & 379.67 & 55.66 & 39.61 \\
+MessagePack & 2858.83 & 51.66 & 74.53 \\
+SJT (json) & 2433.38 & 36.76 & 42.13 \\
+SJT + gzip & 359.00 & 69.59 & 46.82 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{5. Performance Notes}
+
+Despite requiring a conversion step (\texttt{JSON.parse → SJT.decode()}), SJT outperforms JSON in both speed and size. This is attributed to:
+
+\begin{itemize}
+  \item \textbf{Reduced object allocation}: fewer nested objects, no repeated field names.
+  \item \textbf{Better GC behavior}: SJT arrays create less memory fragmentation.
+  \item \textbf{V8 optimization}: modern JS engines optimize monomorphic array access far more efficiently than dynamic object parsing.
+  \item \textbf{Structural compactness}: minimized AST depth leads to faster traversal and serialization.
+\end{itemize}
+
+\textit{Note:} Even though SJT still passes through \texttt{JSON.parse} before decoding, its internal structure allows significantly faster access and lower GC overhead than traditional JSON.
+
+\section*{6. Applications}
+
+\begin{itemize}
+  \item REST/GraphQL APIs returning large datasets
+  \item Edge computing and CDN-cached JSON payloads
+  \item JavaScript/TypeScript-based analytics tools
+  \item Data pipelines bridging frontend ↔ backend
+  \item Low-memory embedded JSON readers
+  \item Columnar serialization for browser/edge-side analytics
+\end{itemize}
+
+\section*{7. Related Work}
+
+Several existing formats aim to improve over JSON:
+
+\begin{itemize}
+  \item \textbf{MessagePack}: Efficient binary JSON; improves size, not structure.
+  \item \textbf{Apache Arrow}: Columnar in-memory format, but non-JSON compatible.
+  \item \textbf{JSON Lines}: Line-delimited objects; easier to stream but still redundant.
+  \item \textbf{FlatBuffers, Cap’n Proto}: Highly performant, but binary and non-human-readable.
+\end{itemize}
+
+SJT distinguishes itself by maintaining \textbf{JSON compatibility}, offering structural compactness without requiring binary encoding or specialized tooling.
+
+\section*{8. Compatibility \& Future Work}
+
+\begin{itemize}
+  \item Fully JSON-compatible (parses with \texttt{JSON.parse}).
+  \item A validator/spec tool is being developed for SJT strict mode.
+  \item The metadata section is reserved for schema validation, versioning, etc.
+  \item Language-agnostic: works naturally in JS/TS, Python (via \texttt{zip}), Go, Rust.
+  \item Fully supports \texttt{null}, nested arrays, and deep object trees — as long as each column in the data array aligns consistently with the defined header structure.
+\end{itemize}
+
+\section*{9. References}
+
+\begin{enumerate}
+  \item JSON (ECMA-404 Standard)
+  \item CSV (RFC 4180)
+  \item \href{https://msgpack.org/}{MessagePack}
+  \item \href{https://arrow.apache.org/}{Apache Arrow}
+  \item \href{https://capnproto.org/}{Cap’n Proto}
+  \item \href{https://google.github.io/flatbuffers/}{FlatBuffers}
+  \item \href{https://jsonlines.org/}{JSON Lines}
+\end{enumerate}
+
+\section*{10. Implementation \& Resources}
+
+\begin{itemize}
+  \item \textbf{Spec repo}: \url{https://github.com/SJTF/SJT}
+  \item \textbf{JS Implementation}: \url{https://github.com/yukiakai212/SJT.js}
+  \item \textbf{NPM Package}: \url{https://www.npmjs.com/package/sjt.js}
+  \item Experimental decoder benchmarks in JS, Python, and Rust.
+\end{itemize}
+
+\section*{11. License}
+
+MIT License
+
+\end{document}
