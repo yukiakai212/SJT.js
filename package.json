@@ -1,6 +1,6 @@
 {
   "name": "sjt.js",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Structured JSON Table implementation for TypeScript/JS.",
   "type": "module",
   "types": "./dist/index.d.ts",
