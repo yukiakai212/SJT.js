@@ -129,11 +129,6 @@ SJT is ideal for data **transmission** where reducing **bandwidth** is crucial, 
 
 This library implements the full [Structured JSON Table Specification](https://github.com/SJTF/SJT/) v1.0.
 
----
-
-## Visual Diagram
-
-Raw JSON --> encodeSJT --> [ header, data ] --> decodeSJT --> Raw JSON
 
 ---
 
@@ -180,7 +175,7 @@ Instead of representing each record as an object, SJT stores values by columns:
 // SJT format
 [
   ["id", "name", "age"],                    // header
-  [[1, 2], ["Alice", "Bob"], [25, 30]]      // data by column
+  [[1, 'Alice', 25], [2, 'Bob', 30]]      // data by column
 ]
 
 // Regular JSON
