@@ -21,6 +21,10 @@ const extractHeader = (data: Record<string, any>): any[] => {
   }
   return header;
 };
+
+/*
+This function is only for extracting data without header, performance is less efficient than extracting with header
+*/
 const getValues = (data: Record<string, any>): any[] => {
   const body = [];
   if (Array.isArray(data)) {

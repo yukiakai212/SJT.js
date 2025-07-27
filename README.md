@@ -132,20 +132,19 @@ This library implements the full [Structured JSON Table Specification](https://g
 ---
 
 
-## 📊 Full Encode/Decode Benchmark
+### 📊 Benchmark Comparison (Full Encode/Decode)
 
-| Format          | Size       | Encode Time | Decode Time |
-| --------------- | ---------- | ----------- | ----------- |
-| **JSON**        | 3849.34 KB | 36.20 ms    | 49.46 ms    |
-| **JSON + gzip** | 379.67 KB  | 49.99 ms    | 34.04 ms    |
-| **MessagePack** | 2858.83 KB | 45.50 ms    | 70.28 ms    |
-| **SJT (JSON)**  | 2433.38 KB | 42.44 ms    | 34.94 ms    |
-| **SJT + gzip**  | 359.00 KB  | 67.90 ms    | 44.71 ms    |
+| Format         | Size (KB) | Encode Time | Decode Time |
+|----------------|-----------|-------------|-------------|
+| JSON           | 3849.34   | 41.81 ms    | 51.86 ms    |
+| JSON + Gzip    | 379.67    | 55.66 ms    | 39.61 ms    |
+| MessagePack    | 2858.83   | 51.66 ms    | 74.53 ms    |
+| SJT (json)     | 2433.38   | 36.76 ms    | 42.13 ms    |
+| SJT + Gzip     | 359.00    | 69.59 ms    | 46.82 ms    |
 
 ### 🔍 Notes:
 
-* **SJT** significantly reduces raw JSON size while maintaining fast encode/decode performance.
-* **SJT + gzip** offers the best compression ratio overall, comparable to JSON + gzip, while still being relatively fast.
+* SJT outperforms JSON in both size and speed (encode/decode), and compresses even better than MessagePack.
 * Compared to **MessagePack**, SJT is:
 
   * \~15% smaller
@@ -153,7 +152,7 @@ This library implements the full [Structured JSON Table Specification](https://g
 
 ### 🧪 Test Conditions:
 
-* Dataset: Large structured object with nested arrays/objects
+* Dataset: Large structured (50k record) object with nested arrays/objects
 * Benchmarked using Node.js 20
 * All sizes measured in uncompressed KB (binary formats estimated)
 
