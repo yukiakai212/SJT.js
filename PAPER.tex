@@ -194,6 +194,20 @@ Because of its reduced size and structural predictability, SJT is highly applica
   \item Low-memory embedded JSON readers in IoT or mobile contexts
   \item Columnar serialization for browser-side analytics and visualizations
 \end{itemize}
+
+\subsection*{6.7 Extensibility and Future Directions}
+
+SJT's tabular backbone and recursive support for nested structures position it as a hybrid between relational (SQL-style) and document-oriented (NoSQL) data representations. This opens the door to potential applications beyond mere data interchange:
+
+\begin{itemize}
+  \item \textbf{Native indexing:} Header-based indexing could enable columnar access and selective queries, akin to column stores or vectorized engines.
+  \item \textbf{Structured yet flexible storage:} SJT can represent deeply structured records without enforcing rigid schemas, offering an efficient middle ground between row- and document-based systems.
+  \item \textbf{Potential database integration:} With further development, SJT could serve as an internal serialization or archival format for document databases, offering high compression without losing the ability to map fields precisely.
+\end{itemize}
+
+Although SJT is not a replacement for BSON, Avro, or Parquet, its compactness and schema-aware design suggest it may fulfill a distinct niche—particularly in systems that require fast transmission, selective field access, and minimal payload overhead.
+
+If developed further, SJT could evolve into a foundational data format bridging the gap between lightweight interchange and high-performance storage. Its characteristics enable efficient transport-layer encoding while remaining extensible enough to support database-layer semantics such as projection, filtering, and indexing.
 \section{Limitations}
 
 While the Structured JSON Table (SJT) format provides significant improvements in encoding size, decoding speed, and tabular clarity, it also comes with inherent limitations:
@@ -220,7 +234,6 @@ SJT distinguishes itself by maintaining \textbf{JSON compatibility}, offering st
 \section{Compatibility \& Future Work}
 \begin{itemize}
   \item Fully JSON-compatible (parses with \texttt{JSON.parse}).
-  \item A validator/spec tool is being developed for SJT strict mode.
   \item The metadata section is reserved for schema validation, versioning, etc.
   \item Language-agnostic: works naturally in JS/TS, Python (via \texttt{zip}), Go, Rust.
   \item Fully supports \texttt{null}, nested arrays, and deep object trees --- as long as each column in the data array aligns consistently with the defined header structure.

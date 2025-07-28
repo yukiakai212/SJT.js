@@ -172,6 +172,18 @@ Key transmission scenarios include:
 * Low-memory embedded JSON readers in IoT or mobile contexts
 * Columnar serialization for browser-side analytics and visualizations
 
+#### 6.7 Extensibility and Future Directions
+
+SJT's tabular backbone and recursive support for nested structures position it as a hybrid between relational (SQL-style) and document-oriented (NoSQL) data representations. This opens the door to potential applications beyond mere data interchange:
+
+* **Native indexing**: Header-based indexing could enable columnar access and selective queries, akin to column stores or vectorized engines.
+* **Structured yet flexible storage**: SJT can represent deeply structured records without enforcing rigid schemas, offering an efficient middle ground between row- and document-based systems.
+* **Potential database integration**: With further development, SJT could serve as an internal serialization or archival format for document databases, offering high compression without losing the ability to map fields precisely.
+
+Although SJT is not a replacement for BSON, Avro, or Parquet, its compactness and schema-aware design suggest it may fulfill a distinct niche—particularly in systems that require fast transmission, selective field access, and minimal payload overhead.
+
+If developed further, SJT could evolve into a foundational data format bridging the gap between lightweight interchange and high-performance storage. Its characteristics enable efficient transport-layer encoding while remaining extensible enough to support database-layer semantics such as projection, filtering, and indexing.
+
 ---
 
 ### **7. Limitations**
@@ -199,10 +211,9 @@ SJT distinguishes itself by maintaining **JSON compatibility**, offering structu
 
 ---
 
-### **9. Compatibility & Future Work**
+### **9. Compatibility &  Future Work**
 
 * Fully JSON-compatible (parses with `JSON.parse`).
-* A validator/spec tool is being developed for SJT strict mode.
 * The metadata section is reserved for schema validation, versioning, etc.
 * Language-agnostic: works naturally in JS/TS, Python (via `zip`), Go, Rust.
 * Fully supports `null`, nested arrays, and deep object trees — as long as each column in the data array aligns consistently with the defined header structure.
