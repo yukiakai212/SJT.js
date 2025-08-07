@@ -147,7 +147,7 @@ As a result, even though SJT passes through \texttt{JSON.parse} initially, it le
 \section{Applications \& Advantages in Storage and Querying}
 Structured JSON Table (SJT) is not only a compact data exchange format, but also a practical alternative to JSON for use cases involving data storage, retrieval, and query performance optimization. Its separation between structure (\texttt{header}) and content (\texttt{body}) enables several advantages, especially in read-heavy or resource-constrained environments.
 
-\subsection*{6.1 Column-Like Access Pattern}
+\subsection{Column-Like Access Pattern}
 Because each key is stored only once in the \texttt{header}, and values are aligned by their position in \texttt{body}, SJT mimics the behavior of column-oriented storage systems. Querying a specific field can be performed efficiently by:
 
 \begin{itemize}
@@ -157,13 +157,13 @@ Because each key is stored only once in the \texttt{header}, and values are alig
 
 This allows for fast projection of selected fields without needing to fully deserialize each object, as required in traditional JSON.
 
-\subsection*{6.2 Reduced Overhead in Repeated Structures}
+\subsection{Reduced Overhead in Repeated Structures}
 For datasets with repeated keys (e.g., rows of records with the same fields), SJT minimizes storage redundancy by avoiding the repetition of field names. This not only reduces file size but also simplifies parsing logic by allowing consumers to rely on a consistent schema during traversal.
 
-\subsection*{6.3 Compatibility with Indexed Storage}
+\subsection{Compatibility with Indexed Storage}
 Since \texttt{header} provides an explicit key ordering, it can be used to build lightweight indexing schemes or facilitate binary search over sorted data. This can be especially effective when combined with static or predictable schemas (e.g., logs, analytics, time series).
 
-\subsection*{6.4 Use in Embedded or Constrained Environments}
+\subsection{Use in Embedded or Constrained Environments}
 Due to its compactness and deterministic layout, SJT is well-suited for use in environments where performance or memory is limited, such as:
 
 \begin{itemize}
@@ -173,10 +173,10 @@ Due to its compactness and deterministic layout, SJT is well-suited for use in e
   \item Serverless functions with cold start constraints
 \end{itemize}
 
-\subsection*{6.5 Lazy Decoding and Streaming Potential}
+\subsection{Lazy Decoding and Streaming Potential}
 The structure of SJT allows partial parsing or lazy decoding strategies---consumers may defer parsing of nested values or skip unknown fields without affecting overall data correctness. This opens the door to efficient streaming implementations or integration with columnar analytics pipelines.
 
-\subsection*{6.6 High-Performance Data Transmission}
+\subsection{High-Performance Data Transmission}
 Because of its reduced size and structural predictability, SJT is highly applicable for data \textbf{transmission over networks}, especially in scenarios where payload efficiency and fast parse time are critical:
 
 \begin{itemize}
@@ -194,20 +194,29 @@ Because of its reduced size and structural predictability, SJT is highly applica
   \item Low-memory embedded JSON readers in IoT or mobile contexts
   \item Columnar serialization for browser-side analytics and visualizations
 \end{itemize}
+\section{Decoder Considerations and Optimizations}
+\subsection*{Selective Decoding Optimization}
 
-\subsection*{6.7 Extensibility and Future Directions}
+Although SJT relies on standard JSON parsers to deserialize the payload, its structural separation enables post-parse optimizations. In particular, a decoder can leverage the known field names from the header to selectively extract only required keys from each data record.
 
-SJT's tabular backbone and recursive support for nested structures position it as a hybrid between relational (SQL-style) and document-oriented (NoSQL) data representations. This opens the door to potential applications beyond mere data interchange:
+For example, given a dataset such as:
+\begin{verbatim}
+[
+  {"id": 1, "name": "Alice"},
+  {"id": 2, "name": "Bob"}
+]
+\end{verbatim}
 
-\begin{itemize}
-  \item \textbf{Native indexing:} Header-based indexing could enable columnar access and selective queries, akin to column stores or vectorized engines.
-  \item \textbf{Structured yet flexible storage:} SJT can represent deeply structured records without enforcing rigid schemas, offering an efficient middle ground between row- and document-based systems.
-  \item \textbf{Potential database integration:} With further development, SJT could serve as an internal serialization or archival format for document databases, offering high compression without losing the ability to map fields precisely.
-\end{itemize}
+If the consumer only needs the \texttt{id} field, the decoder can quickly discard the \texttt{name} field during iteration, resulting in:
+\begin{verbatim}
+[
+  {"id": 1},
+  {"id": 2}
+]
+\end{verbatim}
 
-Although SJT is not a replacement for BSON, Avro, or Parquet, its compactness and schema-aware design suggest it may fulfill a distinct niche—particularly in systems that require fast transmission, selective field access, and minimal payload overhead.
+This technique reduces memory usage and speeds up processing, especially when working with large datasets in which only a few fields are relevant. It also opens the door for lightweight APIs or clients to retrieve only partial structures with minimal overhead, while still maintaining full JSON compatibility.
 
-If developed further, SJT could evolve into a foundational data format bridging the gap between lightweight interchange and high-performance storage. Its characteristics enable efficient transport-layer encoding while remaining extensible enough to support database-layer semantics such as projection, filtering, and indexing.
 \section{Limitations}
 
 While the Structured JSON Table (SJT) format provides significant improvements in encoding size, decoding speed, and tabular clarity, it also comes with inherent limitations:
@@ -218,6 +227,8 @@ While the Structured JSON Table (SJT) format provides significant improvements i
 
   \item \textbf{No Native Support for Rich Types:} \\
   SJT does not represent advanced types such as \texttt{Date}, \texttt{BigInt}, or binary data. Applications must handle such conversions explicitly, typically by preprocessing the data before encoding.
+   \item \textbf{Reduced Human Readability:} \\
+  Although the format is technically JSON-compatible, its positional encoding of fields (via arrays) makes it difficult for humans to interpret without simultaneously referencing the associated header. This hinders debugging or manual inspection.
 \end{itemize}
 \section{Related Work}
 Several existing formats aim to improve over JSON:
@@ -230,7 +241,7 @@ Several existing formats aim to improve over JSON:
 \end{itemize}
 
 SJT distinguishes itself by maintaining \textbf{JSON compatibility}, offering structural compactness without requiring binary encoding or specialized tooling.
-
+\clearpage
 \section{Compatibility \& Future Work}
 \begin{itemize}
   \item Fully JSON-compatible (parses with \texttt{JSON.parse}).

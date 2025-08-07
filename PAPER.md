@@ -211,7 +211,7 @@ SJT distinguishes itself by maintaining **JSON compatibility**, offering structu
 
 ---
 
-### **9. Compatibility &  Future Work**
+### **9. Compatibility & Future Work**
 
 * Fully JSON-compatible (parses with `JSON.parse`).
 * The metadata section is reserved for schema validation, versioning, etc.
