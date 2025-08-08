@@ -3,7 +3,6 @@ import { gzipSync, gunzipSync } from 'zlib';
 import { encode as msgpackEncode, decode as msgpackDecode } from '@msgpack/msgpack';
 import { encodeSJT, decodeSJT } from '../src/index.ts'; //
 
-
 // Fake data
 const input = {
   users: Array.from({ length: 200000 }, (_, i) => ({
@@ -65,14 +64,12 @@ function runBenchmark() {
       () => Buffer.from(JSON.stringify(input)),
       (buf) => JSON.parse(buf.toString()),
     ),
-    
 
     benchmarkCase(
       'SJT (json)',
       () => Buffer.from(JSON.stringify(encodeSJT(input))),
       (buf) => JSON.parse(buf.toString()),
     ),
-   
   ];
 
   for (const result of results) {

@@ -56,6 +56,44 @@ export function encodeSJT(data: Record<string, any>[], options?: EncodeSJTOption
   const values = data.map((row) => extractors.map((fn) => fn(row)));
   return [header, values];
 }
+export const decodeSJT = (data: object[], filter: object[]): any => {
+  return decode(data[0], data[1], filter || data[0]);
+};
+const decode = (header: any, data: any, filter: any): any => {
+  if (!filter) return null;
+  // Case array object (header is [[subHeader]])
+  if (Array.isArray(header) && header.length === 1 && Array.isArray(header[0])) {
+    return Array.isArray(data) ? data.map((item: any) => decode(header[0], item, filter[0])) : undefined;
+  }
+
+  // Case object
+  else if (Array.isArray(header)) {
+    //Case primitive array
+    if (filter[0] === '') return [];
+    if (header[0] === null) return data[0];
+
+    const result: any = {};
+    header.forEach((h, i) => {
+      if (filter[i] === '') return;
+      if (typeof h === 'string') {
+        result[h] = data[i];
+      } else if (Array.isArray(h) && typeof h[0] === 'string') {
+        const [key, subHeader] = h;
+        if (Array.isArray(subHeader)) {
+          result[key] = decode(subHeader, data[i], filter[i]);
+        } else {
+          throw new Error('Invalid subHeader format');
+        }
+      } else {
+        throw new Error('Invalid header format');
+      }
+    });
+    return result;
+  }
+
+  // case primitive
+  return data;
+};
 
 const users = [
   { id: 1, name: 'Alice', tags: [{ key: 'role', value: 'admin' }], info: { name: 'a' } },
@@ -76,15 +114,16 @@ const [hd, vd] = encodev1(data);
 const [hn, vn] = encodev1(nested);
 const [hna, vna] = encodev1(nestedArray);
 
-console.log(JSON.stringify(encodev1({})));
-console.log(JSON.stringify(encodev1({null: 1})));
+console.log(decodeSJT(encodev1({})));
+console.log(decodeSJT(encodev1([])));
+console.log(decodeSJT(encodev1({ null: 1 })));
 
-console.log(JSON.stringify(encode(headerv1, users)));
-console.log(JSON.stringify(encode(hp, primitiveArray)));
-console.log(JSON.stringify(vp));
+console.log(decodeSJT([headerv1, valuesv1]));
+console.log(decodeSJT([hp, vp], ['']));
+console.log(decodeSJT([hd, vd]));
 
-console.log(JSON.stringify(encode(hd, data)));
-console.log(JSON.stringify(vd));
+console.log(decodeSJT([hn, vn], ['name', '', '']));
+console.log(decodeSJT([hna, vna]));
 
-console.log(JSON.stringify(headerv1));
-console.log(JSON.stringify(valuesv1));
+//console.log(JSON.stringify(headerv1));
+//console.log(JSON.stringify(valuesv1));
