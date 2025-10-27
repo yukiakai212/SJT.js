@@ -53,7 +53,7 @@
     "@changesets/cli": "^2.29.5",
     "@eslint/js": "^9.32.0",
     "@msgpack/msgpack": "^3.1.2",
-    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/coverage-v8": "^4.0.3",
     "dotenv": "^17.2.1",
     "eslint": "^9.32.0",
     "pkg-sandbox": "^1.0.1",
