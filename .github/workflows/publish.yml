@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       id-token: write  
 
     steps:
@@ -28,17 +28,25 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-      - name: Install sandbox
-        run: npm run build && npx sandbox
       - name: Parse publish tag from Git tag
         uses: yukiakai212/publish-tag@v1
         id: tag
         with:
           source: 'package.json'
+      - name: Commit version bump and push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f v${{ steps.tag.outputs.version }}
+          git push origin -f v${{ steps.tag.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Authenticate with NPM TOKEN
-        run: npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+        run: echo 'Using Trusted Publisher' # npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
       - name: Build package
         run: npm run test
+      - name: Install sandbox
+        run: npm run build && npx sandbox
       - name: Publish to npm with provenance
         run: npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
         env:
