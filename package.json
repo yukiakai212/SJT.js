@@ -51,7 +51,7 @@
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
-    "@eslint/js": "^9.32.0",
+    "@eslint/js": "^9.39.2",
     "@msgpack/msgpack": "^3.1.2",
     "@vitest/coverage-v8": "^4.0.15",
     "dotenv": "^17.2.1",
