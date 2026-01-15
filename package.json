@@ -32,6 +32,7 @@
   ],
   "author": "Yuki_akai",
   "homepage": "https://github.com/yukiakai212/SJT.js",
+  "funding": "https://github.com/sponsors/yukiakai212",
   "engines": {
     "node": ">= 16"
   },
