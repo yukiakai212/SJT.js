@@ -1,5 +1,11 @@
 # sjt.js
 
+## 1.1.2
+
+### Patch Changes
+
+- dc67cb1: Using Trusted Publisher
+
 ## 1.1.1
 
 ### Patch Changes
